@@ -127,7 +127,7 @@ def tfidf(training_data_frame, testing_data_frame):
 
 
 def output_file(test_set, test_file):
-    filename = f"coltri_{test_file}_entry1.txt"
+    filename = f"coltri_{test_file}"
     print(f"Writing File: {filename}")
     test_set = test_set.sort_index()
     columns = ["predicted_sentiment"]
