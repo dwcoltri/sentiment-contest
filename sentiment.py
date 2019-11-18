@@ -131,7 +131,7 @@ def output_file(test_set, test_file):
     print(f"Writing File: {filename}")
     test_set = test_set.sort_index()
     columns = ["predicted_sentiment"]
-    test_set.to_csv(filename, index=True, columns=columns, header=True, sep=" ")
+    test_set.to_csv(filename, index=True, columns=columns, header=False, sep=" ")
 
 
 def _with_cmd_line_args(f):
