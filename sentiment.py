@@ -79,8 +79,8 @@ def open_files(cmd_line_args):
         "Training.txt",
         sep="\t",
         error_bad_lines=False,
-        low_memory=False,
         warn_bad_lines=False,
+        engine="python",
     )
     if cmd_line_args.test_file:
         train_set = data_frame
@@ -88,20 +88,18 @@ def open_files(cmd_line_args):
             cmd_line_args.test_file,
             sep="\t",
             error_bad_lines=False,
-            low_memory=False,
             warn_bad_lines=False,
+            engine="python",
         )
     else:
         train_set, test_set = train_test_split(data_frame, test_size=0.2)
     train_set = train_set.rename(
         columns={"Sentiment1": "sentiment", "SentimentText": "text"}
     )
-    # train_set = train_set.replace({"-": 0, "+": 1})
     train_set = train_set.drop("TonyID", axis=1)
     test_set = test_set.rename(
         columns={"Sentiment1": "sentiment", "SentimentText": "text"}
     )
-    # test_set = test_set.drop(["sentiment", "TonyID"], axis=1)
     test_set = test_set.drop(["TonyID"], axis=1)
     return train_set, test_set
 
