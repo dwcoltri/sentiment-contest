@@ -5,11 +5,11 @@ import pandas
 import argparse
 import nltk
 import re
+import string
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import accuracy_score
-
 
 # Where the magic happens
 def process(cmd_line_args):
@@ -57,7 +57,7 @@ def preprocess_tweet(tweet):
     # Preprocess the text in a single tweet
     # convert the tweet to lower case
     tweet = str(tweet)
-    tweet.lower()
+    tweet = tweet.lower()
     # convert all urls to sting "URL"
     tweet = re.sub("((www\.[^\s]+)|(https?://[^\s]+))", "URL", tweet)
     # convert all @username to "AT_USER"
@@ -66,12 +66,18 @@ def preprocess_tweet(tweet):
     tweet = re.sub("[\s]+", " ", tweet)
     # convert "#topic" to just "topic"
     tweet = re.sub(r"#([^\s]+)", r"\1", tweet)
+    # Weird characters
+    tweet = "".join([str(char) for char in tweet if char in string.printable])
+    # Try to lemmatize?
+    tweet = lemmatize(tweet)
+    print(tweet)
     return tweet
 
 
-def lemmatize(data_frame):
-    # Still gotta figure this one out
-    return data_frame
+def lemmatize(tweet):
+    word_tokenizer = nltk.tokenize.WhitespaceTokenizer()
+    lemmatizer = nltk.stem.WordNetLemmatizer()
+    return " ".join([lemmatizer.lemmatize(w) for w in word_tokenizer.tokenize(tweet)])
 
 
 def open_files(cmd_line_args):
