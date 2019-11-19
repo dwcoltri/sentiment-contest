@@ -24,11 +24,6 @@ def process(cmd_line_args):
     train_set.text = train_set.text.apply(preprocess_tweet)
     test_set.text = test_set.text.apply(preprocess_tweet)
 
-    # Lemmatize
-    # print("Lemmatizing")
-    # train_set = lemmatize(train_set)
-    # test_set = lemmatize(test_set)
-
     # TFIDF-ize
     print("Running TFIDF")
     training_tfidf, testing_tfidf = tfidf(train_set, test_set)
@@ -59,18 +54,17 @@ def preprocess_tweet(tweet):
     tweet = str(tweet)
     tweet = tweet.lower()
     # convert all urls to sting "URL"
-    tweet = re.sub("((www\.[^\s]+)|(https?://[^\s]+))", "URL", tweet)
+    tweet = re.sub(r"((www\.[^\s]+)|(https?://[^\s]+))", "URL", tweet)
     # convert all @username to "AT_USER"
-    tweet = re.sub("@[^\s]+", "AT_USER", tweet)
+    tweet = re.sub(r"@[^\s]+", "AT_USER", tweet)
     # correct all multiple white spaces to a single white space
-    tweet = re.sub("[\s]+", " ", tweet)
+    tweet = re.sub(r"[\s]+", " ", tweet)
     # convert "#topic" to just "topic"
     tweet = re.sub(r"#([^\s]+)", r"\1", tweet)
     # Weird characters
     tweet = "".join([str(char) for char in tweet if char in string.printable])
     # Try to lemmatize?
     tweet = lemmatize(tweet)
-    # print(tweet)
     return tweet
 
 
@@ -102,11 +96,9 @@ def open_files(cmd_line_args):
     train_set = train_set.rename(
         columns={"Sentiment1": "sentiment", "SentimentText": "text", "TonyID": "id"}
     )
-    # train_set = train_set.drop("TonyID", axis=1)
     test_set = test_set.rename(
         columns={"Sentiment1": "sentiment", "SentimentText": "text", "TonyID": "id"}
     )
-    # test_set = test_set.drop(["TonyID"], axis=1)
     return train_set, test_set
 
 
@@ -120,9 +112,8 @@ def predict(training_tfidf, testing_tfidf, train_set, test_set):
 def tfidf(training_data_frame, testing_data_frame):
     vectorizer = TfidfVectorizer(
         stop_words="english",
-        ngram_range=(1, 2),
+        ngram_range=(1, 3),
         # analyzer="word",
-        # max_df=0.57,
         max_df=0.57,
         # binary=False,
         # token_pattern=r"\w+",
@@ -159,4 +150,5 @@ def main(cmd_line_args):
 
 
 if __name__ == "__main__":
+    # pylint: disable=no-value-for-parameter
     main()
