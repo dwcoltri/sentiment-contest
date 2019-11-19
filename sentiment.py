@@ -70,7 +70,7 @@ def preprocess_tweet(tweet):
     tweet = "".join([str(char) for char in tweet if char in string.printable])
     # Try to lemmatize?
     tweet = lemmatize(tweet)
-    print(tweet)
+    # print(tweet)
     return tweet
 
 
@@ -100,13 +100,13 @@ def open_files(cmd_line_args):
     else:
         train_set, test_set = train_test_split(data_frame, test_size=0.2)
     train_set = train_set.rename(
-        columns={"Sentiment1": "sentiment", "SentimentText": "text"}
+        columns={"Sentiment1": "sentiment", "SentimentText": "text", "TonyID": "id"}
     )
-    train_set = train_set.drop("TonyID", axis=1)
+    # train_set = train_set.drop("TonyID", axis=1)
     test_set = test_set.rename(
-        columns={"Sentiment1": "sentiment", "SentimentText": "text"}
+        columns={"Sentiment1": "sentiment", "SentimentText": "text", "TonyID": "id"}
     )
-    test_set = test_set.drop(["TonyID"], axis=1)
+    # test_set = test_set.drop(["TonyID"], axis=1)
     return train_set, test_set
 
 
@@ -120,9 +120,10 @@ def predict(training_tfidf, testing_tfidf, train_set, test_set):
 def tfidf(training_data_frame, testing_data_frame):
     vectorizer = TfidfVectorizer(
         stop_words="english",
-        # ngram_range=(1, 1),
+        ngram_range=(1, 2),
         # analyzer="word",
         # max_df=0.57,
+        max_df=0.57,
         # binary=False,
         # token_pattern=r"\w+",
         sublinear_tf=True,
@@ -135,9 +136,9 @@ def tfidf(training_data_frame, testing_data_frame):
 def output_file(test_set, test_file):
     filename = f"coltri_{test_file}"
     print(f"Writing File: {filename}")
-    test_set = test_set.sort_index()
-    columns = ["predicted_sentiment"]
-    test_set.to_csv(filename, index=True, columns=columns, header=False, sep=" ")
+    test_set = test_set.sort_values(by=["id"])
+    columns = ["id", "predicted_sentiment"]
+    test_set.to_csv(filename, index=False, columns=columns, header=False, sep=" ")
 
 
 def _with_cmd_line_args(f):
